@@ -24,23 +24,42 @@
         <div id="map" style="height:500px">
 	    </div>
 	    <script>
-	        "use strict"
+	    "use strict"
 
-            function initMap() {
-                const map = document.getElementById("map");
-                const tokyoTower = {lat: 35.6585769, lng: 139.7454506}
-                const opt = {
-                    zoom: 13,
-                    center: tokyoTower
-                };
-                const mapObj = new google.maps.Map(map, opt);
-                
-                const marker = new google.maps.Marker({
-                    position: tokyoTower,
-                    map: mapObj,
-                    title: 'tokyoTower',
-                });
-            }
+        let map;
+        let marker;
+        let geocoder;
+        let infoWindow;
+        let address = '東京都港区芝公園4-2-8';
+        let content = '東京タワー';
+        
+        function initMap() {
+            geocoder = new google.maps.Geocoder();
+            geocoder.geocode({
+                'address': address
+            }, function(results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        center: results[0].geometry.location,
+                        zoom: 15
+                    });
+                    
+                    marker = new google.maps.Marker({
+                        position: results[0].geometry.location,
+                        map: map
+                    });
+                    
+                    infoWindow = new google.maps.InfoWindow({
+                        content: content
+                    });
+                    marker.addListener('click', function() {
+                        infoWindow.open(map, marker);
+                    });
+                } else {
+                    alert(status);
+                }
+            });
+        }
 	    </script>
 	    <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key=AIzaSyASFvrII9-Rp58fdW9Ubrb4p91K1lZ2ANQ&callback=initMap" async defer>
 	   </script>
