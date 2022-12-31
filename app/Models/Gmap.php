@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Gmap extends Model
 {
     use HasFactory;
+    
+    protected $fillable = [
+        'name',
+        'address',
+        'lat',
+        'lng'
+    ];
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [GmapController::class, 'index'])->name('gmaps.index');
+Route::post('/gmaps/store', [GmapController::class, 'store'])->name('gmaps.store');
 
 // Route::get('/', function () {
 //     return view('welcome');

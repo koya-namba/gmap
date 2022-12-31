@@ -21,13 +21,37 @@
         </style>
     </head>
     <body>
-        @foreach($gmaps as $gmap)
-            <p>{{ $gmap->name }}</p>
-            <p>{{ $gmap->address }}</p>
-            <p>{{ $gmap->lat }}</p>
-            <p>{{ $gmap->lng }}</p>
-        @endforeach
+        <div>
+            @foreach($gmaps as $gmap)
+                <p>{{ $gmap->name }}</p>
+                <p>{{ $gmap->address }}</p>
+                <p>{{ $gmap->lat }}</p>
+                <p>{{ $gmap->lng }}</p>
+            @endforeach
+        </div>
         <div id="map" style="height:500px"></div>
+        <div>
+            <form action="{{ route('gmaps.store') }}" method="POST" id="form_register">
+                @csrf
+                <div>
+                    <p>Name</p>
+                    <input type="text" name="gmap[name]" id="addressInput" placeholder="名前"/>
+                </div>
+                <div>
+                    <p>Address</p>
+                    <input type="text" name="gmap[address]" placeholder="住所"/>
+                </div>
+                <div>
+                    経度:<input type="text" name="gmap[lat]" id="lat">
+                </div>
+                <div>
+                    緯度:<input type="text" name="gmap[lng]" id="lng">
+                </div>
+                <div>
+                    <button onclick="getLatLng()">経度緯度変換</button>
+                </div>
+            </form>
+        </div>
         
         <script>
 	    "use strict"
@@ -60,6 +84,39 @@
             marker[i].addListener('click', function() {
                 infoWindow[i].open(map, marker[i]);
             });
+        }
+        
+        function getLatLng() {
+            let address = document.getElementById('addressInput').value;
+            let geocoder = new google.maps.Geocoder();
+            
+            geocoder.geocode({
+                        'address': address
+                    }, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            
+                            let lat = results[0].geometry.location.lat();
+                            let lng = results[0].geometry.location.lng();
+                            
+                            document.getElementById("lat").value = lat ;
+                            document.getElementById("lng").value = lng ;
+                            
+                            document.getElementById("form_register").submit();
+                            
+                        } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
+                            alert("住所が見つかりませんでした。");
+                        } else if (status == google.maps.GeocoderStatus.ERROR) {
+                            alert("サーバ接続に失敗しました。");
+                        } else if (status == google.maps.GeocoderStatus.INVALID_REQUEST) {
+                            alert("リクエストが無効でした。");
+                        } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                            alert("リクエストの制限回数を超えました。");
+                        } else if (status == google.maps.GeocoderStatus.REQUEST_DENIED) {
+                            alert("サービスが使えない状態でした。");
+                        } else if (status == google.maps.GeocoderStatus.UNKNOWN_ERROR) {
+                            alert("原因不明のエラーが発生しました。");
+                        }
+                    });
         }
 	    </script>
 	    <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key=AIzaSyASFvrII9-Rp58fdW9Ubrb4p91K1lZ2ANQ&callback=initMap" async defer></script>
