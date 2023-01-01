@@ -27,6 +27,11 @@
                 <p>{{ $gmap->address }}</p>
                 <p>{{ $gmap->lat }}</p>
                 <p>{{ $gmap->lng }}</p>
+                <form action="{{ route('gmaps.delete', $gmap) }}" id="form_{{ $gmap->id }}" method="post">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="deleteGmap({{ $gmap->id }})">削除</button>
+                </form>
             @endforeach
         </div>
         <div id="map" style="height:500px"></div>
@@ -117,6 +122,12 @@
                             alert("原因不明のエラーが発生しました。");
                         }
                     });
+        }
+        
+        function deleteGmap(id) {
+            if (confirm('本当に削除しますか？')) {
+                document.getElementById(`form_${id}`).submit();
+            }
         }
 	    </script>
 	    <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key=AIzaSyASFvrII9-Rp58fdW9Ubrb4p91K1lZ2ANQ&callback=initMap" async defer></script>

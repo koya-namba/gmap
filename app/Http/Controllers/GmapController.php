@@ -32,4 +32,10 @@ class GmapController extends Controller
         
         return redirect(route('gmaps.index'));
     }
+    
+    public function delete(Gmap $gmap)
+    {
+        $gmap->delete();
+        return redirect(route('gmaps.index'));
+    }
 }
