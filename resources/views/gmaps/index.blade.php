@@ -23,7 +23,7 @@
     <body>
         <div>
             @foreach($gmaps as $gmap)
-                <p>{{ $gmap->name }}</p>
+                <a href="{{ route('gmaps.index', ['gmap_id' => $gmap->id]) }}"><p>{{ $gmap->name }}</p></a>
                 <p>{{ $gmap->address }}</p>
                 <p>{{ $gmap->lat }}</p>
                 <p>{{ $gmap->lng }}</p>
@@ -64,9 +64,10 @@
         let marker = [];
         let infoWindow = [];
         let markerData = @json($gmaps);
+        let centerData = @json($center_data);
         
         function initMap() {
-            let mapLatLng = {lat: markerData[0]['lat'], lng: markerData[0]['lng']};
+            let mapLatLng = {lat: centerData['lat'], lng: centerData['lng']};
             map = new google.maps.Map(document.getElementById('map'), {
                 center: mapLatLng,
                 zoom: 12

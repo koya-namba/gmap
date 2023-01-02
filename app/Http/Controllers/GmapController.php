@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\DB;
 
 class GmapController extends Controller
 {
-    public function index(Gmap $gmap)
+    public function index(Request $request, Gmap $gmap)
     {
-        return view('gmaps.index', ['gmaps' => $gmap->get()]);
+        if (isset($request->gmap_id)) {
+            $center_data = $gmap->where('id', $request->gmap_id)->first();
+        } else {
+            $center_data = $gmap->latest()->first();
+        }
+        return view('gmaps.index', ['gmaps' => $gmap->get(), 'center_data' => $center_data]);
     }
     
     public function store(Request $request, Gmap $gmap)
