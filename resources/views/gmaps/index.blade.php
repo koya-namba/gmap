@@ -18,44 +18,191 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
+            
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .app {
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .header {
+                height: 100px;
+                padding: 0.5em 1em;
+            
+                box-sizing: border-box;
+            
+            }
+            
+            .main {
+                padding: 0.5em 1em;
+                display: flex;
+                flex-direction: row;
+                flex-grow: 1;
+            }
+            
+            .sidebar {
+                width: 25%;
+                padding: 0.5em 1em;
+                background-color: whitesmoke;
+                box-sizing: border-box;
+            }
+            
+            .content {
+                padding: 0.5em 1em;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+            }
+            
+            .flex-content {
+                flex-grow: 1;
+                padding: 0.5em 1em;
+                box-sizing: border-box;
+            }
+            
+            .fixed-content {
+                height: 600px;
+                padding: 0.5em 1em;
+                background-color: whitesmoke;
+                box-sizing: border-box;
+            }
+            
+            .form {
+                width: 20%;
+                padding: 0.5em 1em;
+                background-color: whitesmoke;
+                box-sizing: border-box;
+            }
+            
+            .box8 {
+                padding: 0.5em 1em;
+                margin: 2em 0;
+                color: #232323;
+                background: #fff8e8;
+                border-left: solid 10px #ffc06e;
+            }
+            
+            .box8 p {
+                margin: 0; 
+                padding: 0;
+            }
+            
+            .sample_box10 {
+                padding: 1em 1.5em;
+                margin: 2em 0;
+                background: linear-gradient(to bottom, #ffffff, #eeeeee);/*背景色*/
+                background: -webkit-linear-gradient(top, #fffff, #eeeeee);/*背景色*/
+                border: 1px solid #eeeeee;/*枠線*/
+                border-top: 4px solid #00008b;/*上の線*/
+                box-shadow: 0 -1px 0 rgba(255, 255, 255, 1) inset;
+                color:#000000;/*文字色*/
+            }
+            
+            .sample_box10 p {
+                margin: 0; 
+                padding: 0;
+            }
+            
+            .btn1 {
+                margin: 0.5em 0;
+                font-weight: 700;
+                line-height: 1.5;
+                position: relative;
+                display: inline-block;
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                -webkit-transition: all 0.3s;
+                transition: all 0.3s;
+                text-align: center;
+                vertical-align: middle;
+                text-decoration: none;
+                letter-spacing: 0.1em;
+                color: #212529;
+                border-radius: 0.5rem;
+            }
+            
+            .btn1-border {
+              border: 2px solid #000;
+              border-radius: 0;
+              background: #fff;
+            }
+            
+            .btn1-border:hover {
+              color: #fff;
+              background: #000;
+            }
+            
         </style>
     </head>
     <body>
-        <div>
-            @foreach($gmaps as $gmap)
-                <a href="{{ route('gmaps.index', ['gmap_id' => $gmap->id]) }}"><p>{{ $gmap->name }}</p></a>
-                <p>{{ $gmap->address }}</p>
-                <p>{{ $gmap->lat }}</p>
-                <p>{{ $gmap->lng }}</p>
-                <form action="{{ route('gmaps.delete', $gmap) }}" id="form_{{ $gmap->id }}" method="post">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" onclick="deleteGmap({{ $gmap->id }})">削除</button>
-                </form>
-            @endforeach
-        </div>
-        <div id="map" style="height:500px"></div>
-        <div>
-            <form action="{{ route('gmaps.store') }}" method="POST" id="form_register">
-                @csrf
-                <div>
-                    <p>Name</p>
-                    <input type="text" name="gmap[name]" id="addressInput" placeholder="名前"/>
+        <div class="app">
+            <div class="header">
+                <h1>行きたいスポット</h1>
+            </div>
+            <div class="main">
+                <div class="sidebar">
+                    <h2>スポット一覧</h2>
+                    @foreach($gmaps as $gmap)
+                        <div class="box8">
+                            <a href="{{ route('gmaps.index', ['gmap_id' => $gmap->id]) }}">
+                                <p>{{ $gmap->name }}</p>
+                            </a>
+                            <p>{{ $gmap->address }}</p>
+                            <p>{{ $gmap->lat }}</p>
+                            <p>{{ $gmap->lng }}</p>
+                            <form action="{{ route('gmaps.delete', $gmap) }}" id="form_{{ $gmap->id }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" onclick="deleteGmap({{ $gmap->id }})">削除</button>
+                            </form>
+                        </div>
+                    @endforeach
                 </div>
-                <div>
-                    <p>Address</p>
-                    <input type="text" name="gmap[address]" placeholder="住所"/>
+                <div class="content">
+                <div id="map" class="fixed-content"></div>
+                <div class="flex-content">
+                    <h1>{{ $center_data->name }}</h1>
+                    <p>住所: {{ $center_data->address }}</p>
+                    <p>経度: {{ $center_data->lat }}</p>
+                    <p>緯度: {{ $center_data->lng }}</p>
                 </div>
-                <div>
-                    経度:<input type="text" name="gmap[lat]" id="lat">
                 </div>
-                <div>
-                    緯度:<input type="text" name="gmap[lng]" id="lng">
+                <div class="form">
+                    <h2>スポット追加</h2>
+                    <div class="sample_box10">
+                        <form action="{{ route('gmaps.store') }}" method="POST" id="form_register">
+                            @csrf
+                            <div>
+                                <p>Name</p>
+                                <input type="text" name="gmap[name]" id="addressInput" placeholder="名前"/>
+                            </div>
+                            <div>
+                                <p>Address</p>
+                                <input type="text" name="gmap[address]" placeholder="住所"/>
+                            </div>
+                            <div>
+                                経度:<input type="text" name="gmap[lat]" id="lat">
+                            </div>
+                            <div>
+                                緯度:<input type="text" name="gmap[lng]" id="lng">
+                            </div>
+                            <div>
+                                <button class="btn1 btn1-border" onclick="getLatLng()">スポット追加</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div>
-                    <button onclick="getLatLng()">経度緯度変換</button>
-                </div>
-            </form>
+            </div>
         </div>
         
         <script>
