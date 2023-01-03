@@ -147,11 +147,11 @@
     <body>
         <div class="app">
             <div class="header">
-                <h1>行きたいスポット</h1>
+                <h1>Memory spot</h1>
             </div>
             <div class="main">
                 <div class="sidebar">
-                    <h2>スポット一覧</h2>
+                    <h2>Spot list</h2>
                     @foreach($gmaps as $gmap)
                         <div class="box8">
                             <a href="{{ route('gmaps.index', ['gmap_id' => $gmap->id]) }}">
@@ -178,7 +178,7 @@
                 </div>
                 </div>
                 <div class="form">
-                    <h2>スポット追加</h2>
+                    <h2>Add spot</h2>
                     <div class="sample_box10">
                         <form action="{{ route('gmaps.store') }}" method="POST" id="form_register">
                             @csrf
