@@ -141,7 +141,6 @@
               color: #fff;
               background: #000;
             }
-            
         </style>
     </head>
     <body>
@@ -149,6 +148,7 @@
             <div class="header">
                 <h1>Memory spot</h1>
             </div>
+            
             <div class="main">
                 <div class="sidebar">
                     <h2>Spot list</h2>
@@ -168,15 +168,17 @@
                         </div>
                     @endforeach
                 </div>
+                
                 <div class="content">
-                <div id="map" class="fixed-content"></div>
-                <div class="flex-content">
-                    <h1>{{ $center_data->name }}</h1>
-                    <p>住所: {{ $center_data->address }}</p>
-                    <p>経度: {{ $center_data->lat }}</p>
-                    <p>緯度: {{ $center_data->lng }}</p>
+                    <div id="map" class="fixed-content"></div>
+                    <div class="flex-content">
+                        <h1>{{ $center_data->name }}</h1>
+                        <p>住所: {{ $center_data->address }}</p>
+                        <p>経度: {{ $center_data->lat }}</p>
+                        <p>緯度: {{ $center_data->lng }}</p>
+                    </div>
                 </div>
-                </div>
+                
                 <div class="form">
                     <h2>Add spot</h2>
                     <div class="sample_box10">
@@ -207,21 +209,28 @@
         
         <script>
 	    "use strict"
-        let map;
-        let marker = [];
-        let infoWindow = [];
-        let markerData = @json($gmaps);
+	    let markerData = @json($gmaps);
         let centerData = @json($center_data);
+        let map;
+        let mapLatLng;
+        let marker = [];
+        let markerLatLng;
+        let infoWindow = [];
+        let address;
+        let geocoder;
+        let lat;
+        let lng;
         
+        // マップの表示
         function initMap() {
-            let mapLatLng = {lat: centerData['lat'], lng: centerData['lng']};
+            mapLatLng = {lat: centerData['lat'], lng: centerData['lng']};
             map = new google.maps.Map(document.getElementById('map'), {
                 center: mapLatLng,
                 zoom: 12
             });
             
             for (let i=0; i<markerData.length; i++) {
-                let markerLatLng = {lat: markerData[i]['lat'], lng: markerData[i]['lng']};
+                markerLatLng = {lat: markerData[i]['lat'], lng: markerData[i]['lng']};
                 marker[i] = new google.maps.Marker({
                     position: markerLatLng,
                     map: map
@@ -233,29 +242,27 @@
             }
         }
         
+        // マーカーをクリック
         function markerEvent(i) {
             marker[i].addListener('click', function() {
                 infoWindow[i].open(map, marker[i]);
             });
         }
         
+        // 住所から緯度経度を取得できればフォームを送信.
         function getLatLng() {
-            let address = document.getElementById('addressInput').value;
-            let geocoder = new google.maps.Geocoder();
+            address = document.getElementById('addressInput').value;
+            geocoder = new google.maps.Geocoder();
             
             geocoder.geocode({
                         'address': address
                     }, function(results, status) {
                         if (status === google.maps.GeocoderStatus.OK) {
-                            
-                            let lat = results[0].geometry.location.lat();
-                            let lng = results[0].geometry.location.lng();
-                            
+                            lat = results[0].geometry.location.lat();
+                            lng = results[0].geometry.location.lng();
                             document.getElementById("lat").value = lat ;
                             document.getElementById("lng").value = lng ;
-                            
                             document.getElementById("form_register").submit();
-                            
                         } else if (status == google.maps.GeocoderStatus.ZERO_RESULTS) {
                             alert("住所が見つかりませんでした。");
                         } else if (status == google.maps.GeocoderStatus.ERROR) {
@@ -272,6 +279,7 @@
                     });
         }
         
+        // 削除フォームの送信
         function deleteGmap(id) {
             if (confirm('本当に削除しますか？')) {
                 document.getElementById(`form_${id}`).submit();
